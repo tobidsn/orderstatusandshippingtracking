@@ -28,15 +28,15 @@ Order Status & Shipping Tracking Extension Features
 - Admin can enter JNE, TIKI, POS and anymore tracking codes while marking magento order as shipped. These tracking codes will be automatically picked up by this free magento order tracking extension
 - 100% open code free magento extension
 
+Screenshots
+----------
+
 Access By Guest
 -----------
 http://127.0.0.1/magento/lacakpesanan/
 
 ![Order Status & Shipping Tracking By Guest](src/lacakpesanan.png "Order Status & Shipping Tracking By Guest")
 
-
-Screenshots
-----------
 
 Extension Configuration
 ----------
