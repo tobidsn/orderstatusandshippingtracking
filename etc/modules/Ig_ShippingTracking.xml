@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Ig_ShippingTracking>
+      <active>true</active>
+      <codePool>local</codePool>
+    </Ig_ShippingTracking>
+  </modules>
+</config>

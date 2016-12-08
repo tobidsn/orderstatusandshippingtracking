@@ -1,0 +1,188 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2006-2016 X.commerce, Inc. and affiliates (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php $_results = $this->getTrackingInfo(); ?>
+<?php $order = Mage::registry('current_order'); ?>
+<div class="page-title title-buttons">
+    <h1><?php echo $this->__('Order Status'); ?></h1>
+</div>
+<div class="fieldset" style="font-size: 15px;">
+    <ul class="form-list">
+        <li class="fields">
+            <strong><?php echo $this->__('Order Number') ?>: #<?php echo $order->getIncrementId() ?></strong>
+        </li>
+        <li class="fields">
+            <strong><?php echo $this->__('Order Status') ?>: <?php echo $order->getStatusLabel() ?></strong>
+        </li>
+    </ul>
+</div> 
+<?php if(sizeof($_results)>0): ?>
+<?php foreach($_results as $shipid => $_result): ?>
+    <?php if(sizeof($_result)>0): ?> 
+        <?php foreach($_result as $track): ?>
+            <br/>
+            <?php if (Mage::helper('shippingtracking')->rajaongkirEnable()): ?>
+                <?php if(isset($track['title']) && isset($track['number']) && $track['number']): ?>
+                    <?php 
+                        $curl = curl_init();
+                        curl_setopt_array($curl, array(
+                          CURLOPT_URL => ''.$this->getRajaongkirUrl().'',
+                          CURLOPT_RETURNTRANSFER => true,
+                          CURLOPT_ENCODING => '',
+                          CURLOPT_MAXREDIRS => 10,
+                          CURLOPT_TIMEOUT => 30,
+                          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                          CURLOPT_CUSTOMREQUEST => 'POST',
+                          CURLOPT_POSTFIELDS => 'waybill='.$track['number'].'&courier='.strtolower($track['title']).'',
+                          CURLOPT_HTTPHEADER => array(
+                            'content-type: application/x-www-form-urlencoded',
+                            'key: '.$this->_getDecryptedConfig('rajaongkir_api/access_key').''
+                          ),
+                        ));
+                        $response = curl_exec($curl);
+                        $err = curl_error($curl);
+                        curl_close($curl);
+                        if ($err) {
+                            echo "Tracking #:" . $err;
+                            echo "</br>";
+                            echo "<strong>Silahkan hubungi admin.</strong>";
+                        } else {
+                            $results = json_decode($response, true);
+
+                            $status['code'] = $results['rajaongkir']['status']['code'];
+                                if ($status['code'] == 200) {                            
+                                $query['courier']  = $results['rajaongkir']['query']['courier'];
+                                $query['waybill']  = $results['rajaongkir']['query']['waybill'];
+                                $result['manifest'] = $results['rajaongkir']['result']['manifest'];                                                                                   
+                                ?>
+                                <div class ="row">
+                                    <div class ="col-lg-12" id="track">
+                                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading" role="tab" id="heading0" style="min-height38px;">
+                                                    <h3 class="panel-title">
+                                                    <?php echo strtoupper($query['courier']).' - '.$query['waybill'];?> 
+                                                    <span class="pull-right">
+                                                    <a role="button" value="Add To Search" id="add_button" class="btn btn-xs btn-primary" data-toggle="collapse" sdata-parent="#accordion" aria-expanded="true" aria-controls="collapse0" href="#collapse0">
+                                                    <i class="glyphicon glyphicon-chevron-down"></i>
+                                                    </a>
+                                                    </span>
+                                                    </h3>
+                                                </div>
+
+
+                                                <div id="collapse0" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading0" aria-expanded="true">
+                                                    <div class="panel-body">
+                                                            <?php 
+                                                            $i = 1;
+                                                            foreach ($result['manifest'] as $key) {
+                                                                $manifest_description = $key['manifest_description'];
+                                                                $manifest_date        = $key['manifest_date'];
+                                                                $manifest_time        = $key['manifest_time'];
+                                                                $city_name            = $key['city_name'];
+                                                                $panel                = $i++; 
+                                                            ?>
+
+                                                            <ul class="timeline">
+                                                                <li class="timeline-inverted">
+                                                                <?php
+                                                                    switch ($panel) {
+                                                                        case "1":
+                                                                            echo "<div class='timeline-badge primary'><i class='glyphicon glyphicon-check'></i>";
+                                                                            break;
+                                                                        case "2":
+                                                                            echo "<div class='timeline-badge info'> <i class='glyphicon glyphicon-download'></i>";
+                                                                            break;
+                                                                        case "3":
+                                                                            echo "<div class='timeline-badge primary'> <i class='glyphicon glyphicon-list'></i>";
+                                                                            break;
+                                                                        case "4":
+                                                                            echo "<div class='timeline-badge info'> <i class='glyphicon glyphicon-plane'></i>";
+                                                                            break;
+                                                                        case "5":
+                                                                            echo "<div class='timeline-badge primary'> <i class='glyphicon glyphicon-check'></i>";
+                                                                            break;
+                                                                        case "6":
+                                                                            echo "<div class='timeline-badge info'>  <i class='glyphicon glyphicon-user'></i>";
+                                                                            break;
+                                                                        case "7":
+                                                                            echo "<div class='timeline-badge primary'> <i class='glyphicon glyphicon-thumbs-up'></i>";
+                                                                            break;
+                                                                        case "8":
+                                                                            echo "<div class='timeline-badge info'> <i class='glyphicon glyphicon-thumbs-up'></i>";
+                                                                            break;
+                                                                        default:
+                                                                            echo "<div class='timeline-badge primary'> <i class='glyphicon glyphicon-check'></i>";
+                                                                    }
+                                                                ?>
+                                                                    </div>
+                                                                    <div class="timeline-panel">
+                                                                    <div class="timeline-heading">
+                                                                        <h4 class="timeline-title">
+
+                                                                        <?php echo $manifest_description ?></h4>
+                                                                    </div>
+                                                                    <div class="timeline-body">
+                                                                    <p>
+                                                                    <?php echo $city_name ?></p>
+                                                                    <small class="text-muted"><i class="glyphicon glyphicon-time"></i>  <?php echo $manifest_date.' - '.$manifest_time ?></small>
+                                                                    </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        <?php
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php 
+                                } else {
+                                    echo "Tracking Error";
+                                    echo "</br>";
+                                    echo "<strong>Silahkan hubungi admin.</strong>";
+                                }?>
+                        <?php }
+                    ?>
+                <?php endif; ?> 
+            <?php endif; ?>
+        <!--end for each tracking information-->
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p><?php echo $this->__('There is no tracking available for this shipment.'); ?></p>
+    <?php endif; ?>
+
+<?php endforeach; ?>
+<?php else: ?>
+    <h2><?php echo $this->__('Tracking Information'); ?></h2>
+    <strong><?php echo $this->__('There is no tracking available.'); ?></strong>
+<?php endif; ?>
+<div class="buttons-set">
+    <p class="back-link"><a href="<?php echo $this->getUrl('*/', array('order' => $this->getRequest()->getParam('order'))) ?>"><small>« </small><?php echo $this->__('Back') ?></a></p>
+</div>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<layout version="1.0.0">
+
+    <default>
+        <reference name="footer_links">
+            <action method="addLink" translate="label title" module="shippingtracking" ifconfig="shippingtracking/general/enabled"><label>Check Order Status</label><url helper="shippingtracking/getShippingTrackingUrl" /><title>Check Order Status</title></action>
+        </reference>
+    </default>
+
+    <shippingtracking_index_index>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="shippingTracking.main" template="shippingtracking/main.phtml"/>
+        </reference>
+        <reference name="before_body_end">
+            <block type="core/template" template="shippingtracking/footer.phtml" />
+        </reference>
+    </shippingtracking_index_index>
+
+    <shippingtracking_index_info>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="shippingtracking/shipping_tracking_popup" name="shippingTracking.info" template="shippingtracking/info.phtml"/>
+        </reference>
+        <reference name="before_body_end">
+            <block type="core/template" template="shippingtracking/footer.phtml" />
+        </reference>
+    </shippingtracking_index_info>
+
+    <shipping_tracking_popup translate="label">
+        <reference name="content">
+            <reference name="shipping.tracking.popup">
+                <action method="setTemplate"><template>shippingtracking/popup.phtml</template></action>
+            </reference>
+        </reference>
+    </shipping_tracking_popup>
+</layout>   
+    
