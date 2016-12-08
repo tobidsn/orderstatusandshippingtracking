@@ -44,15 +44,11 @@ Extension Configuration
 ![Config](src/config.png "Config")
 
 
-Order Status & Shipping Tracking By Guest
+Order Status & Shipping Tracking
 ----------
 
 ![Order Status & Shipping Tracking By Guest](src/status.png "Order Status & Shipping Tracking By Guest")
 
-Order Status & Shipping Tracking By Admin And Customer Login
-----------
-
-![Order Status & Shipping Tracking By Admin And Customer Login](src/shipping.png "Order Status & Shipping Tracking By Admin And Customer Login")
 
 Donations
 ---------- 
